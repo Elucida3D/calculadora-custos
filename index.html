@@ -121,9 +121,9 @@
     <button class="btn-pdf" id="btnPdf" onclick="abrirOrcamento()">Visualizar Orçamento</button>
 
     <div class="result-box" id="resultado">
-        <div class="result-item"><span>Custo de Material:</span> <span id="resMaterial">R\$ 0,00</span></div>
-        <div class="result-item"><span>Custo de Máquina:</span> <span id="resMaquina">R\$ 0,00</span></div>
-        <div class="result-item total"><span>Preço Sugerido:</span> <span id="resTotal">R\$ 0,00</span></div>
+        <div class="result-item"><span>Custo de Material:</span> <span id="resMaterial">R$ 0,00</span></div>
+        <div class="result-item"><span>Custo de Máquina:</span> <span id="resMaquina">R$ 0,00</span></div>
+        <div class="result-item total"><span>Preço Sugerido:</span> <span id="resTotal">R$ 0,00</span></div>
     </div>
 </div>
 
@@ -138,7 +138,6 @@
         const lucro = parseFloat(document.getElementById('lucro').value) || 0;
         const material = document.getElementById('material').value;
 
-        // Define o preço do quilo baseado no material selecionado
         const precoKg = material === 'PETG' ? 140 : 130;
 
         const custoMaterial = (peso * (precoKg / 1000));
@@ -162,8 +161,6 @@
         const prazo = document.getElementById('prazo').value || 'A combinar';
         const total = document.getElementById('resTotal').innerText;
         const dataAtual = new Date().toLocaleDateString('pt-BR');
-
-        const descricaoFormatada = descricao.replace(/\n/g, '<br>');
 
         const novaAba = window.open('', '_blank');
         
@@ -208,10 +205,13 @@
                 
                 ${descricao ? `
                 <div class="label" style="margin-top: 10px;">Descrição Detalhada:</div>
-                <div class="desc-box">${descricaoFormatada}</div>
+                <div class="desc-box">${descricao}</div>
                 ` : ''}
 
                 <div class="total-box">
                     <span class="total-label">Valor Total do Serviço</span>
                     <span class="total-val">${total}</span>
+                </div>
+                <div class="footer">
+                    <p>Agradecemos a preferência e a confiança em nosso trabalho!</p>
                 </div>
