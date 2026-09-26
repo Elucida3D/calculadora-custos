@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora de Impressão 3D - Elucida 3D</title>
-    <!-- Biblioteca para gerar PDF -->
-    <script src="https://cloudflare.com"></script>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -33,14 +31,17 @@
         .brand-header p { margin: 5px 0 0 0; color: #666; font-size: 14px; }
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; color: #444; font-weight: 600; font-size: 14px; }
-        input {
+        input, textarea, select {
             width: 100%;
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 6px;
             box-sizing: border-box;
             font-size: 16px;
+            font-family: inherit;
+            background-color: #fff;
         }
+        textarea { resize: vertical; min-height: 80px; }
         button {
             width: 100%;
             padding: 12px;
@@ -70,7 +71,6 @@
             font-size: 15px;
         }
         .total { font-weight: bold; font-size: 18px; color: #17a2b8; border-top: 1px solid #ccc; padding-top: 8px; }
-        #pdf-template { padding: 30px; background: white; color: #333; font-family: sans-serif; }
     </style>
 </head>
 <body>
@@ -90,6 +90,17 @@
         <input type="text" id="peca" placeholder="Ex: Mini Nossa Senhora">
     </div>
     <div class="form-group">
+        <label>Material Utilizado:</label>
+        <select id="material">
+            <option value="PLA">PLA (R$ 130/kg)</option>
+            <option value="PETG">PETG (R$ 140/kg)</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Descrição do Serviço:</label>
+        <textarea id="descricao" placeholder="Ex: Resolução de 0.2mm, cor sólida e remoção de suportes inclusa."></textarea>
+    </div>
+    <div class="form-group">
         <label>Peso da Peça (gramas):</label>
         <input type="number" id="peso" placeholder="0">
     </div>
@@ -107,7 +118,7 @@
     </div>
 
     <button class="btn-calc" onclick="calcular()">Calcular Valor</button>
-    <button class="btn-pdf" id="btnPdf" onclick="gerarPDF()">Gerar PDF do Orçamento</button>
+    <button class="btn-pdf" id="btnPdf" onclick="abrirOrcamento()">Visualizar Orçamento</button>
 
     <div class="result-box" id="resultado">
         <div class="result-item"><span>Custo de Material:</span> <span id="resMaterial">R\$ 0,00</span></div>
@@ -117,18 +128,20 @@
 </div>
 
 <script>
-    // Configurações fixas da Elucida 3D
     const NOME_MARCA = "Elucida 3D";
     const WHATSAPP   = "(88) 98125-6089";
-    const PRECO_KG   = 130;
     const PRECO_HORA = 2;
 
     function calcular() {
         const peso = parseFloat(document.getElementById('peso').value) || 0;
         const tempo = parseFloat(document.getElementById('tempo').value) || 0;
         const lucro = parseFloat(document.getElementById('lucro').value) || 0;
+        const material = document.getElementById('material').value;
 
-        const custoMaterial = (peso * (PRECO_KG / 1000));
+        // Define o preço do quilo baseado no material selecionado
+        const precoKg = material === 'PETG' ? 140 : 130;
+
+        const custoMaterial = (peso * (precoKg / 1000));
         const custoMaquina = tempo * PRECO_HORA;
         const custoFabricacao = custoMaterial + custoMaquina;
         const precoFinal = custoFabricacao * (1 + (lucro / 100));
@@ -141,63 +154,64 @@
         document.getElementById('btnPdf').style.display = 'block';
     }
 
-    function gerarPDF() {
+    function abrirOrcamento() {
         const cliente = document.getElementById('cliente').value || 'Cliente';
         const peca = document.getElementById('peca').value || 'Peça 3D';
+        const material = document.getElementById('material').value;
+        const descricao = document.getElementById('descricao').value || '';
         const prazo = document.getElementById('prazo').value || 'A combinar';
         const total = document.getElementById('resTotal').innerText;
+        const dataAtual = new Date().toLocaleDateString('pt-BR');
 
-        const elemento = document.createElement('div');
-        elemento.innerHTML = `
-            <div id="pdf-template">
-                <div style="text-align: center; border-bottom: 2px solid #007bff; padding-bottom: 10px; margin-bottom: 20px;">
-                    <h1 style="margin: 0; color: #007bff; font-size: 28px; font-weight: bold; letter-spacing: 0.5px;">${NOME_MARCA}</h1>
-                    <p style="margin: 5px 0 0 0; color: #555; font-size: 14px;">WhatsApp: ${WHATSAPP}</p>
+        const descricaoFormatada = descricao.replace(/\n/g, '<br>');
+
+        const novaAba = window.open('', '_blank');
+        
+        novaAba.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Orçamento - ${cliente}</title>
+                <style>
+                    body { font-family: sans-serif; padding: 40px; color: #333; background: #fff; line-height: 1.5; }
+                    .header { text-align: center; border-bottom: 2px solid #007bff; padding-bottom: 15px; margin-bottom: 30px; }
+                    .header h1 { margin: 0; color: #007bff; font-size: 32px; }
+                    .header p { margin: 5px 0 0 0; color: #555; font-size: 16px; }
+                    h2 { font-size: 20px; color: #444; margin-bottom: 20px; }
+                    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 16px; }
+                    td { padding: 10px 0; vertical-align: top; }
+                    .label { color: #666; width: 150px; font-weight: bold; }
+                    .value { color: #111; }
+                    .desc-box { background: #fdfdfd; border: 1px dashed #ccc; padding: 15px; border-radius: 6px; margin: 20px 0; font-size: 15px; color: #444; }
+                    .total-box { background: #f8f9fa; border-left: 5px solid #28a745; padding: 20px; border-radius: 4px; margin: 30px 0; }
+                    .total-label { font-size: 14px; color: #666; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px; }
+                    .total-val { font-size: 30px; color: #28a745; display: block; margin-top: 5px; font-weight: bold; }
+                    .footer { margin-top: 60px; border-top: 1px solid #eee; padding-top: 20px; text-align: center; font-size: 14px; color: #888; }
+                    .btn-print { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; margin-bottom: 20px; font-size: 15px; }
+                    @media print { .btn-print { display: none; } body { padding: 20px; } }
+                </style>
+            </head>
+            <body>
+                <button class="btn-print" onclick="window.print()">Salvar / Imprimir Orçamento</button>
+                <div class="header">
+                    <h1>${NOME_MARCA}</h1>
+                    <p>WhatsApp: ${WHATSAPP}</p>
                 </div>
-                
-                <h2 style="color: #333; font-size: 18px; margin-bottom: 15px;">Orçamento de Serviço de Impressão 3D</h2>
-                
-                <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 14px;">
-                    <tr>
-                        <td style="padding: 6px 0; color: #666; width: 130px;"><strong>Cliente:</strong></td>
-                        <td style="padding: 6px 0; color: #111;">${cliente}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 6px 0; color: #666;"><strong>Item/Modelo:</strong></td>
-                        <td style="padding: 6px 0; color: #111;">${peca}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 6px 0; color: #666;"><strong>Prazo de Entrega:</strong></td>
-                        <td style="padding: 6px 0; color: #111; font-weight: bold; color: #007bff;">${prazo}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 6px 0; color: #666;"><strong>Data de Emissão:</strong></td>
-                        <td style="padding: 6px 0; color: #111;">${new Date().toLocaleDateString('pt-BR')}</td>
-                    </tr>
+                <h2>Orçamento de Serviço de Impressão 3D</h2>
+                <table>
+                    <tr><td class="label">Cliente:</td><td class="value">${cliente}</td></tr>
+                    <tr><td class="label">Item/Modelo:</td><td class="value">${peca}</td></tr>
+                    <tr><td class="label">Material:</td><td class="value" style="font-weight: bold;">${material}</td></tr>
+                    <tr><td class="label">Prazo de Entrega:</td><td class="value" style="font-weight: bold; color: #007bff;">${prazo}</td></tr>
+                    <tr><td class="label">Data de Emissão:</td><td class="value">${dataAtual}</td></tr>
                 </table>
                 
-                <div style="background: #f8f9fa; border-left: 4px solid #28a745; padding: 15px; margin: 30px 0; border-radius: 4px;">
-                    <span style="font-size: 13px; color: #666; display: block; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px;">Valor Total do Serviço</span>
-                    <strong style="font-size: 26px; color: #28a745; display: block; margin-top: 5px;">${total}</strong>
+                ${descricao ? `
+                <div class="label" style="margin-top: 10px;">Descrição Detalhada:</div>
+                <div class="desc-box">${descricaoFormatada}</div>
+                ` : ''}
+
+                <div class="total-box">
+                    <span class="total-label">Valor Total do Serviço</span>
+                    <span class="total-val">${total}</span>
                 </div>
-                
-                <div style="margin-top: 45px; border-top: 1px solid #eee; padding-top: 15px; text-align: center;">
-                    <p style="font-size: 12px; color: #888; margin: 0;">Agradecemos a preferência e a confiança em nosso trabalho!</p>
-                </div>
-            </div>
-        `;
-
-        const opcoes = {
-            margin: 15,
-            filename: `Orcamento_${cliente.replace(/\s+/g, '_')}.pdf`,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2 },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-
-        html2pdf().set(opcoes).from(elemento).save();
-    }
-</script>
-
-</body>
-</html>A
