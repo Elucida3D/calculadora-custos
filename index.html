@@ -3,105 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Custo | Elucida3D</title>
+    <title>Calculadora Elucida3D</title>
     <link href="https://googleapis.com" rel="stylesheet">
     <style>
-        :root { --primary: #0071e3; --primary-hover: #0077ed; --whatsapp: #25D366; --whatsapp-hover: #20ba5a; --background: #f5f5f7; --surface: #ffffff; --text: #1d1d1f; --text-secondary: #86868b; --border: #d2d2d7; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--background); color: var(--text); padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .container { background: var(--surface); border-radius: 18px; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05); padding: 30px; width: 100%; max-width: 600px; }
-        header { text-align: center; margin-bottom: 25px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
-        header h1 { font-size: 24px; color: var(--primary); font-weight: 700; }
-        header p { font-size: 14px; color: var(--text-secondary); margin-top: 5px; }
-        .section-title { font-size: 16px; font-weight: 600; margin: 20px 0 10px 0; color: var(--text); display: flex; align-items: center; gap: 8px; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .input-group { display: flex; flex-direction: column; gap: 5px; }
-        label { font-size: 12px; font-weight: 500; color: var(--text-secondary); }
-        input { padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; background: var(--background); outline: none; }
-        input:focus { border-color: var(--primary); background: var(--surface); }
-        button { width: 100%; padding: 12px; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 20px; }
-        .btn-calc { background: var(--primary); color: white; }
-        .btn-calc:hover { background: var(--primary-hover); }
-        .btn-wpp { background: var(--whatsapp); color: white; display: none; justify-content: center; align-items: center; gap: 8px; text-decoration: none; text-align: center; }
-        .btn-wpp:hover { background: var(--whatsapp-hover); }
-        .results { margin-top: 25px; background: var(--background); border-radius: 12px; padding: 20px; }
-        .result-row { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 10px; color: var(--text-secondary); }
-        .result-row.total { border-top: 1px solid var(--border); padding-top: 10px; font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 0; }
-        footer { text-align: center; margin-top: 25px; font-size: 12px; color: var(--text-secondary); }
+        body { background: #eef2f7; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        
+        /* Caixa principal com fundo branco sólido e letras escuras */
+        .box { background: #ffffff !important; color: #111111 !important; border-radius: 16px; padding: 30px; width: 100%; max-width: 550px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 1px solid #d2d2d7; }
+        
+        h1 { color: #0071e3 !important; text-align: center; font-size: 26px; margin-bottom: 5px; font-weight: 700; }
+        p.sub { text-align: center; color: #555555 !important; font-size: 14px; margin-bottom: 25px; font-weight: 500; }
+        
+        .t { font-size: 15px; font-weight: 700; margin: 20px 0 10px; color: #222222 !important; border-bottom: 1px solid #e5e5e5; padding-bottom: 4px; }
+        .g { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .i { display: flex; flex-direction: column; gap: 6px; }
+        
+        /* Labels bem visíveis */
+        label { font-size: 13px; color: #333333 !important; font-weight: 600; }
+        
+        /* Inputs com bordas escuras e fundo limpo */
+        input { padding: 12px; border: 2px solid #a1a1a6 !important; border-radius: 8px; font-size: 14px; background: #ffffff !important; color: #111111 !important; outline: none; font-weight: 500; }
+        input:focus { border-color: #0071e3 !important; background: #ffffff !important; }
+        
+        /* Botão calcular */
+        button { width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 25px; background: #0071e3; color: #ffffff !important; transition: background 0.2s; }
+        button:hover { background: #005bb5; }
+        
+        /* Caixa de Resultados */
+        .res { margin-top: 20px; background: #f5f5f7 !important; border: 1px solid #d2d2d7; border-radius: 10px; padding: 15px; display: none; }
+        .row { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 8px; color: #333333 !important; font-weight: 500; }
+        .total { border-top: 2px dashed #a1a1a6; padding-top: 10px; font-size: 18px; font-weight: 700; color: #000000 !important; margin-bottom: 0; }
+        
+        /* Botão do WhatsApp */
+        .wpp { background: #25D366; color: #ffffff !important; display: none; justify-content: center; align-items: center; gap: 8px; padding: 14px; border-radius: 8px; font-weight: 700; text-decoration: none; margin-top: 12px; font-size: 15px; transition: background 0.2s; }
+        .wpp:hover { background: #1ebd54; }
+        
+        footer { text-align: center; margin-top: 25px; font-size: 12px; color: #666666 !important; font-weight: 500; }
     </style>
-</head><body>
-<div class="container">
-    <header>
-        <h1>Elucida3D</h1>
-        <p>Calculadora Profissional de Custos de Impressão</p>
-    </header>
+</head>
+<body>
 
-    <div class="section-title">📦 Material</div>
-    <div class="grid">
-        <div class="input-group"><label for="peso">Peso usado (g)</label><input type="number" id="peso" placeholder="Ex: 50" min="0" step="any"></div>
-        <div class="input-group"><label for="custoFilamento">Preço do Filamento (R$/kg)</label><input type="number" id="custoFilamento" value="120" min="0" step="any"></div>
+<div class="box">
+    <h1>Elucida3D</h1>
+    <p class="sub">Calculadora Profissional de Custos de Impressão</p>
+    
+    <div class="t">📦 Material</div>
+    <div class="g">
+        <div class="i"><label>Peso usado (g)</label><input type="number" id="peso" placeholder="Ex: 50" min="0" step="any"></div>
+        <div class="i"><label>Preço do Filamento (R\$/kg)</label><input type="number" id="fil" value="120" min="0" step="any"></div>
     </div>
-
-    <div class="section-title">⏱️ Tempo de Impressão</div>
-    <div class="grid">
-        <div class="input-group"><label for="horas">Horas</label><input type="number" id="horas" value="0" min="0"></div>
-        <div class="input-group"><label for="minutos">Minutos</label><input type="number" id="minutos" value="0" min="0" max="59"></div>
+    
+    <div class="t">⏱️ Tempo de Impressão</div>
+    <div class="g">
+        <div class="i"><label>Horas</label><input type="number" id="h" value="0" min="0"></div>
+        <div class="i"><label>Minutos</label><input type="number" id="m" value="0" min="0" max="59"></div>
     </div>
-
-    <div class="section-title">⚙️ Custos Operacionais & Energia</div>
-    <div class="grid">
-        <div class="input-group"><label for="potencia">Potência da Impressora (W)</label><input type="number" id="potencia" value="250" min="0"></div>
-        <div class="input-group"><label for="energia">Custo da Energia (R$/kWh)</label><input type="number" id="energia" value="0.75" min="0" step="any"></div>
-        <div class="input-group"><label for="taxaHora">Depreciação/Hora (R$)</label><input type="number" id="taxaHora" value="2.00" min="0" step="any"></div>
-        <div class="input-group"><label for="lucro">Margem de Lucro (%)</label><input type="number" id="lucro" value="50" min="0"></div>
+    
+    <div class="t">⚙️ Custos Operacionais & Energia</div>
+    <div class="g">
+        <div class="i"><label>Potência da Impressora (W)</label><input type="number" id="pot" value="250" min="0"></div>
+        <div class="i"><label>Custo da Energia (R\$/kWh)</label><input type="number" id="kwh" value="0.75" min="0" step="any"></div>
+        <div class="i"><label>Depreciação/Hora (R\$)</label><input type="number" id="tax" value="2.00" min="0" step="any"></div>
+        <div class="i"><label>Margem de Lucro (%)</label><input type="number" id="luc" value="50" min="0"></div>
     </div>
-
-    <button class="btn-calc" onclick="calcularCusto()">Calcular Preço</button>
-
-    <div class="results" id="resultadosBox" style="display: none;">
-        <div class="result-row"><span>Gasto de Material:</span><span id="resMaterial">R$ 0,00</span></div>
-        <div class="result-row"><span>Gasto de Energia:</span><span id="resEnergia">R$ 0,00</span></div>
-        <div class="result-row"><span>Uso da Máquina:</span><span id="resTaxa">R$ 0,00</span></div>
-        <div class="result-row total"><span>Preço Final:</span><span id="resTotal">R$ 0,00</span></div>
+    
+    <button onclick="calc()">Calcular Preço</button>
+    
+    <div class="res" id="boxRes">
+        <div class="row"><span>Gasto de Material:</span><span id="rM">R\$ 0,00</span></div>
+        <div class="row"><span>Operação + Energia:</span><span id="rO">R\$ 0,00</span></div>
+        <div class="row total"><span>Preço Final Recomendado:</span><span id="rT">R\$ 0,00</span></div>
     </div>
-
-    <a href="#" id="wppBtn" class="btn-wpp" target="_blank">💬 Enviar Orçamento no WhatsApp</a>
+    
+    <a href="#" id="bW" class="wpp" target="_blank">💬 Enviar Orçamento no WhatsApp</a>
+    
     <footer>&copy; 2026 Elucida3D. Todos os direitos reservados.</footer>
-</div><script>
-function calcularCusto() {
-    const peso = parseFloat(document.getElementById('peso').value) || 0;
-    const custoFilamento = parseFloat(document.getElementById('custoFilamento').value) || 0;
-    const horas = parseInt(document.getElementById('horas').value) || 0;
-    const minutos = parseInt(document.getElementById('minutos').value) || 0;
-    const potencia = parseFloat(document.getElementById('potencia').value) || 0;
-    const energiaKwh = parseFloat(document.getElementById('energia').value) || 0;
-    const taxaHora = parseFloat(document.getElementById('taxaHora').value) || 0;
-    const lucroPorcentagem = parseFloat(document.getElementById('lucro').value) || 0;
+</div>
 
-    const tempoTotalHoras = horas + (minutos / 60);
-    const custoMaterial = (peso / 1000) * custoFilamento;
-    const custoEnergia = (potencia / 1000) * tempoTotalHoras * energiaKwh;
-    const custoTaxaMaquina = tempoTotalHoras * taxaHora;
-    const custoDeProducao = custoMaterial + custoEnergia + custoTaxaMaquina;
-    const precoFinal = custoDeProducao * (1 + (lucroPorcentagem / 100));
+<script>
+function calc() {
+    const p = parseFloat(document.getElementById('peso').value) || 0;
+    const f = parseFloat(document.getElementById('fil').value) || 0;
+    const h = parseInt(document.getElementById('h').value) || 0;
+    const m = parseInt(document.getElementById('m').value) || 0;
+    const po = parseFloat(document.getElementById('pot').value) || 0;
+    const k = parseFloat(document.getElementById('kwh').value) || 0;
+    const t = parseFloat(document.getElementById('tax').value) || 0;
+    const l = parseFloat(document.getElementById('luc').value) || 0;
 
-    document.getElementById('resMaterial').innerText = custoMaterial.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-    document.getElementById('resEnergia').innerText = custoEnergia.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-    document.getElementById('resTaxa').innerText = custoTaxaMaquina.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-    document.getElementById('resTotal').innerText = precoFinal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-    document.getElementById('resultadosBox').style.display = 'block';
+    const tempo = h + (m / 60);
+    const cMat = (p / 1000) * f;
+    const cOpe = ((po / 1000) * tempo * k) + (tempo * t);
+    const preco = (cMat + cOpe) * (1 + (l / 100));
 
-    const fMoeda = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-    const textoMensagem = encodeURIComponent(
-        `Olá! Orçamento da *Elucida3D*:\n\n` +
-        `📦 *Impressão:*\n- Peso: ${peso}g\n- Tempo: ${horas}h ${minutos}min\n\n` +
-        `💰 *Valores:*\n- Material: ${fMoeda(custoMaterial)}\n- Operação: ${fMoeda(custoEnergia + custoTaxaMaquina)}\n` +
-        `-------\n*Preço Final: ${fMoeda(precoFinal)}*`
-    );
+    const mF = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    document.getElementById('rM').innerText = mF(cMat);
+    document.getElementById('rO').innerText = mF(cOpe);
+    document.getElementById('rT').innerText = mF(preco);
+    document.getElementById('boxRes').style.display = 'block';
 
-    const btnWpp = document.getElementById('wppBtn');
-    btnWpp.href = `https://wa.me{textoMensagem}`;
-    btnWpp.style.display = 'flex';
+    const msg = encodeURIComponent(`Olá! Aqui está o orçamento da *Elucida3D*:\n\n📦 *Dados da Impressão:*\n- Peso estimado: ${p}g\n- Tempo de execução: ${h}h ${m}min\n\n💰 *Preço Final: ${mF(preco)}*`);
+    const btn = document.getElementById('bW');
+    btn.href = `https://wa.me{msg}`;
+    btn.style.display = 'flex';
 }
 </script>
 </body>
