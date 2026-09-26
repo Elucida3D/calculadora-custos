@@ -5,55 +5,92 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora de Impressão 3D - Elucida 3D</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; display: flex; justify-content: center; }
-        .container { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); max-width: 500px; width: 100%; }
-        .brand-header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #007bff; padding-bottom: 15px; }
-        .logo-preview { max-width: 80px; max-height: 80px; margin-bottom: 10px; border-radius: 50%; object-fit: cover; }
-        .brand-header h2 { margin: 0; color: #007bff; font-size: 26px; font-weight: 700; }
-        .brand-header p { margin: 5px 0 0 0; color: #666; font-size: 14px; display: flex; justify-content: center; gap: 10px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; color: #444; font-weight: 600; font-size: 14px; }
-        input, textarea, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 16px; background-color: #fff; }
-        textarea { resize: vertical; min-height: 80px; }
-        button { width: 100%; padding: 12px; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; margin-top: 10px; font-weight: bold; }
-        .btn-calc { background-color: #007bff; color: white; }
-        .btn-pdf { background-color: #28a745; color: white; display: none; }
-        .result-box { margin-top: 20px; padding: 15px; background: #e9ecef; border-radius: 6px; display: none; }
-        .result-item { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 15px; }
-        .total { font-weight: bold; font-size: 18px; color: #17a2b8; border-top: 1px solid #ccc; padding-top: 8px; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background-color: #f3f4f6; margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .container { background: white; padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); max-width: 500px; width: 100%; border: 1px solid #e5e7eb; }
+        .brand-header { text-align: center; margin-bottom: 25px; border-bottom: 2px solid #3b82f6; padding-bottom: 20px; }
+        .logo-preview { max-width: 85px; max-height: 85px; margin-bottom: 12px; border-radius: 50%; object-fit: cover; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .brand-header h2 { margin: 0; color: #1e3a8a; font-size: 28px; font-weight: 800; letter-spacing: -0.5px; }
+        .brand-header p { margin: 6px 0 0 0; color: #4b5563; font-size: 14px; display: flex; justify-content: center; gap: 12px; font-weight: 500; }
+        .section-title { font-size: 16px; color: #1e3a8a; font-weight: 700; margin: 20px 0 10px 0; padding-bottom: 5px; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; gap: 6px; }
+        .form-group { margin-bottom: 14px; }
+        label { display: block; margin-bottom: 5px; color: #374151; font-weight: 600; font-size: 13px; }
+        input, textarea, select { width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; box-sizing: border-box; font-size: 15px; background-color: #f9fafb; color: #1f2937; }
+        input:focus, textarea:focus, select:focus { background-color: #fff; border-color: #3b82f6; outline: none; box-shadow: 0 0 0 3px rgba(59,130,246,0.15); }
+        textarea { resize: vertical; min-height: 70px; }
+        .row { display: flex; gap: 10px; }
+        .row .form-group { flex: 1; }
+        button { width: 100%; padding: 12px; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; margin-top: 10px; font-weight: 700; transition: all 0.2s; }
+        .btn-calc { background-color: #3b82f6; color: white; box-shadow: 0 4px 6px rgba(59,130,246,0.2); }
+        .btn-calc:hover { background-color: #2563eb; }
+        .btn-pdf { background-color: #10b981; color: white; display: none; box-shadow: 0 4px 6px rgba(16,185,129,0.2); }
+        .btn-pdf:hover { background-color: #059669; }
+        .result-box { margin-top: 20px; padding: 15px; background: #f3f4f6; border-radius: 8px; display: none; border: 1px solid #e5e7eb; }
+        .result-item { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; color: #4b5563; }
+        .total { font-weight: 800; font-size: 19px; color: #1e3a8a; border-top: 2px dashed #d1d5db; padding-top: 8px; margin-bottom: 0; }
     </style>
-</head>
-<body>
+</head><body>
 <div class="container">
     <div class="brand-header">
         <img id="logoImg" class="logo-preview" src="https://flaticon.com" alt="Logo">
         <h2>Elucida 3D</h2>
         <p><span>📱 (88) 98125-6089</span> <span>📸 @elucida3d</span></p>
     </div>
-    <div class="form-group" style="background: #f8f9fa; padding: 10px; border-radius: 6px; border: 1px solid #e0e0e0;">
-        <label style="color: #007bff;">URL da imagem da sua Logo (opcional):</label>
-        <input type="text" id="logoUrl" placeholder="Cole o link da sua logo aqui" onchange="atualizarLogo()">
+    
+    <div class="form-group" style="background: #eff6ff; padding: 10px; border-radius: 8px; border: 1px dashed #bfdbfe;">
+        <label style="color: #1e40af; margin-bottom: 3px;">Link da imagem da sua Logo (opcional):</label>
+        <input type="text" id="logoUrl" placeholder="Cole o link da sua logo aqui" onchange="atualizarLogo()" style="background: #fff;">
     </div>
-    <div class="form-group"><label>Nome do Cliente:</label><input type="text" id="cliente" placeholder="Ex: João Silva"></div>
-    <div class="form-group"><label>Nome da Peça / Projeto:</label><input type="text" id="peca" placeholder="Ex: Mini Nossa Senhora"></div>
-    <div class="form-group"><label>Material Utilizado:</label><select id="material"><option value="PLA">PLA (R$ 130/kg)</option><option value="PETG">PETG (R$ 140/kg)</option></select></div>
-    <div class="form-group"><label>Descrição do Serviço:</label><textarea id="descricao" placeholder="Ex: Resolução de 0.2mm, cor sólida e remoção de suportes inclusa."></textarea></div>
-    <div class="form-group"><label>Peso da Peça (gramas):</label><input type="number" id="peso" value="0"></div>
-    <div class="form-group"><label>Tempo de Impressão (horas):</label><input type="number" id="tempo" value="0"></div>
-    <div class="form-group"><label>Margem de Lucro (%):</label><input type="number" id="lucro" value="100"></div>
-    <div class="form-group"><label>Prazo de Entrega:</label><input type="text" id="prazo" placeholder="Ex: 3 dias úteis, Pronta entrega"></div>
-    <button class="btn-calc" onclick="calcular()">Calcular Valor</button>
+
+    <div class="section-title">👤 Informações do Cliente</div>
+    <div class="row">
+        <div class="form-group"><label>Nome do Cliente:</label><input type="text" id="cliente" placeholder="Ex: João"></div>
+        <div class="form-group"><label>Nome da Peça:</label><input type="text" id="peca" placeholder="Ex: Mini Maria"></div>
+    </div>
+    <div class="form-group"><label>Descrição do Serviço:</label><textarea id="descricao" placeholder="Ex: Resolução de 0.2mm, acabamento padrão."></textarea></div>
+
+    <div class="section-title">📦 Informações do Material</div>
+    <div class="row">
+        <div class="form-group"><label>Peso Usado (gramas):</label><input type="number" id="peso" value="0"></div>
+        <div class="form-group">
+            <label>Tipo de Material:</label>
+            <select id="material" onchange="mudarPrecoMaterial()">
+                <option value="PLA">PLA</option>
+                <option value="PETG">PETG</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group"><label>Custo do Filamento (R$/kg):</label><input type="number" id="custoFilamento" value="130"></div>
+
+    <div class="section-title">⏱️ Tempo de Impressão</div>
+    <div class="row">
+        <div class="form-group"><label>Horas:</label><input type="number" id="horas" value="0"></div>
+        <div class="form-group"><label>Minutos:</label><input type="number" id="minutos" value="0"></div>
+    </div>
+
+    <div class="section-title">⚡ Custos Operacionais & Energia</div>
+    <div class="row">
+        <div class="form-group"><label>Potência da Impressora (W):</label><input type="number" id="potencia" value="250"></div>
+        <div class="form-group"><label>Taxa de Energia (R$/kWh):</label><input type="number" id="energiaKwh" value="0.71"></div>
+    </div>
+    <div class="row">
+        <div class="form-group"><label>Desgaste Máquina (R$/h):</label><input type="number" id="desgaste" value="2.00"></div>
+        <div class="form-group"><label>Margem de Lucro (%):</label><input type="number" id="lucro" value="100"></div>
+    </div>
+    <div class="form-group"><label>Prazo de Entrega:</label><input type="text" id="prazo" placeholder="Ex: 3 dias úteis"></div>
+
+    <button class="btn-calc" onclick="calcular()">Calcular Custo</button>
     <button class="btn-pdf" id="btnPdf" onclick="abrirOrcamento()">Visualizar Orçamento</button>
+
     <div class="result-box" id="resultado">
-        <div class="result-item"><span>Custo de Material:</span> <span id="resMaterial">R$ 0,00</span></div>
-        <div class="result-item"><span>Custo de Máquina:</span> <span id="resMaquina">R$ 0,00</span></div>
-        <div class="result-item total"><span>Preço Sugerido:</span> <span id="resTotal">R$ 0,00</span></div>
+        <div class="result-item"><span>Custo do Material:</span> <span id="resMaterial">R$ 0,00</span></div>
+        <div class="result-item"><span>Custo de Energia:</span> <span id="resEnergia">R$ 0,00</span></div>
+        <div class="result-item"><span>Custo de Manutenção:</span> <span id="resManutencao">R$ 0,00</span></div>
+        <div class="result-item total"><span>PREÇO FINAL:</span> <span id="resTotal">R$ 0,00</span></div>
     </div>
 </div><script>
     const NOME_MARCA = "Elucida 3D";
     const WHATSAPP   = "(88) 98125-6089";
     const INSTAGRAM  = "@elucida3d";
-    const PRECO_HORA = 2;
 
     window.onload = function() {
         const savedLogo = localStorage.getItem('elucida_logo_url');
@@ -65,31 +102,44 @@
 
     function atualizarLogo() {
         const url = document.getElementById('logoUrl').value.trim();
-        const defaultLogo = "https://flaticon.com";
         if (url !== "") {
             document.getElementById('logoImg').src = url;
             localStorage.setItem('elucida_logo_url', url);
         } else {
-            document.getElementById('logoImg').src = defaultLogo;
+            document.getElementById('logoImg').src = "https://flaticon.com";
             localStorage.removeItem('elucida_logo_url');
         }
     }
 
+    function mudarPrecoMaterial() {
+        const mat = document.getElementById('material').value;
+        document.getElementById('custoFilamento').value = (mat === "PETG") ? 140 : 130;
+    }
+
     function calcular() {
         const peso = parseFloat(document.getElementById('peso').value) || 0;
-        const tempo = parseFloat(document.getElementById('tempo').value) || 0;
+        const custoFilamento = parseFloat(document.getElementById('custoFilamento').value) || 0;
+        const horas = parseFloat(document.getElementById('horas').value) || 0;
+        const minutos = parseFloat(document.getElementById('minutos').value) || 0;
+        const potencia = parseFloat(document.getElementById('potencia').value) || 0;
+        const energiaKwh = parseFloat(document.getElementById('energiaKwh').value) || 0;
+        const desgaste = parseFloat(document.getElementById('desgaste').value) || 0;
         const lucro = parseFloat(document.getElementById('lucro').value) || 0;
-        const material = document.getElementById('material').value;
-        const precoKg = (material === "PETG") ? 140 : 130;
 
-        const custoMaterial = peso * (precoKg / 1000);
-        const custoMaquina = tempo * PRECO_HORA;
-        const custoFabricacao = custoMaterial + custoMaquina;
+        const tempoTotalHoras = horas + (minutos / 60);
+
+        const custoMat = peso * (custoFilamento / 1000);
+        const custoEnergia = (potencia / 1000) * tempoTotalHoras * energiaKwh;
+        const custoManut = tempoTotalHoras * desgaste;
+
+        const custoFabricacao = custoMat + custoEnergia + custoManut;
         const precoFinal = custoFabricacao * (1 + (lucro / 100));
 
-        document.getElementById('resMaterial').innerText = "R$ " + custoMaterial.toFixed(2).replace('.', ',');
-        document.getElementById('resMaquina').innerText = "R$ " + custoMaquina.toFixed(2).replace('.', ',');
+        document.getElementById('resMaterial').innerText = "R$ " + custoMat.toFixed(2).replace('.', ',');
+        document.getElementById('resEnergia').innerText = "R$ " + custoEnergia.toFixed(2).replace('.', ',');
+        document.getElementById('resManutencao').innerText = "R$ " + custoManut.toFixed(2).replace('.', ',');
         document.getElementById('resTotal').innerText = "R$ " + precoFinal.toFixed(2).replace('.', ',');
+
         document.getElementById('resultado').style.display = 'block';
         document.getElementById('btnPdf').style.display = 'block';
     }
@@ -106,12 +156,12 @@
 
         let blocoDescricao = '';
         if (descricao.trim() !== '') {
-            blocoDescricao = '<div style="color: #666; font-weight: bold; margin-top: 15px;">Descrição Detalhada:</div>' +
-                             '<div style="background: #fdfdfd; border: 1px dashed #ccc; padding: 15px; border-radius: 6px; margin: 15px 0; font-size: 15px; color: #444;">' + descricao.replace(/\n/g, '<br>') + '</div>';
+            blocoDescricao = '<div style="color: #4b5563; font-weight: bold; margin-top: 15px; font-size: 14px;">Descrição Detalhada:</div>' +
+                             '<div style="background: #f9fafb; border: 1px dashed #d1d5db; padding: 15px; border-radius: 8px; margin: 10px 0; font-size: 15px; color: #374151;">' + descricao.replace(/\n/g, '<br>') + '</div>';
         }
 
         const novaAba = window.open('', '_blank');
-        novaAba.document.write('<!DOCTYPE html><html><head><title>Orçamento - ' + cliente + '</title><style>body { font-family: sans-serif; padding: 40px; color: #333; background: #fff; line-height: 1.5; }.header { text-align: center; border-bottom: 2px solid #007bff; padding-bottom: 15px; margin-bottom: 30px; }.header img { max-width: 70px; max-height: 70px; border-radius: 50%; object-fit: cover; margin-bottom: 8px; }.header h1 { margin: 0; color: #007bff; font-size: 32px; }.header p { margin: 5px 0 0 0; color: #555; font-size: 15px; }h2 { font-size: 20px; color: #444; margin-bottom: 20px; }table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 16px; }td { padding: 10px 0; vertical-align: top; }.label { color: #666; width: 150px; font-weight: bold; }.value { color: #111; }.total-box { background: #f8f9fa; border-left: 5px solid #28a745; padding: 20px; border-radius: 4px; margin: 30px 0; }.total-label { font-size: 14px; color: #666; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px; }.total-val { font-size: 30px; color: #28a745; display: block; margin-top: 5px; font-weight: bold; }.footer { margin-top: 60px; border-top: 1px solid #eee; padding-top: 20px; text-align: center; font-size: 14px; color: #888; }.btn-print { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; margin-bottom: 20px; font-size: 15px; }@media print { .btn-print { display: none; } body { padding: 20px; } }</style></head><body><button class="btn-print" onclick="window.print()">Salvar / Imprimir Orçamento</button><div class="header"><img src="' + logoAtualSrc + '" alt="Logo"><h1>' + NOME_MARCA + '</h1><p>WhatsApp: ' + WHATSAPP + ' | Instagram: ' + INSTAGRAM + '</p></div><h2>Orçamento de Serviço de Impressão 3D</h2><table><tr><td class="label">Cliente:</td><td class="value">' + cliente + '</td></tr><tr><td class="label">Item/Modelo:</td><td class="value">' + peca + '</td></tr><tr><td class="label">Material:</td><td class="value" style="font-weight: bold;">' + material + '</td></tr><tr><td class="label">Prazo de Entrega:</td><td class="value" style="font-weight: bold; color: #007bff;">' + prazo + '</td></tr><tr><td class="label">Data de Emissão:</td><td class="value">' + dataAtual + '</td></tr></table>' + blocoDescricao + '<div class="total-box"><span class="total-label">Valor Total do Serviço</span><span class="total-val">' + total + '</span></div><div class="footer"><p>Agradecemos a preferência e a confiança em nosso trabalho!</p></div></body></html>');
+        novaAba.document.write('<!DOCTYPE html><html><head><title>Orçamento - ' + cliente + '</title><style>body { font-family: sans-serif; padding: 40px; color: #333; background: #fff; line-height: 1.5; }.header { text-align: center; border-bottom: 2px solid #3b82f6; padding-bottom: 15px; margin-bottom: 30px; }.header img { max-width: 75px; max-height: 75px; border-radius: 50%; object-fit: cover; margin-bottom: 8px; }.header h1 { margin: 0; color: #1e3a8a; font-size: 32px; font-weight: bold; }.header p { margin: 5px 0 0 0; color: #555; font-size: 15px; }h2 { font-size: 20px; color: #444; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 8px; }table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 16px; }td { padding: 10px 0; vertical-align: top; }.label { color: #666; width: 150px; font-weight: bold; }.value { color: #111; }.total-box { background: #f0fdf4; border-left: 5px solid #10b981; padding: 20px; border-radius: 6px; margin: 30px 0; }.total-label { font-size: 14px; color: #047857; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px; }.total-val { font-size: 32px; color: #10b981; display: block; margin-top: 5px; font-weight: bold; }.footer { margin-top: 60px; border-top: 1px solid #eee; padding-top: 20px; text-align: center; font-size: 14px; color: #888; }.btn-print { background: #3b82f6; color: white; padding: 12px 24px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-bottom: 25px; font-size: 15px; }@media print { .btn-print { display: none; } body { padding: 20px; } }</style></head><body><button class="btn-print" onclick="window.print()">Salvar / Imprimir Orçamento</button><div class="header"><img src="' + logoAtualSrc + '" alt="Logo"><h1>' + NOME_MARCA + '</h1><p>WhatsApp: ' + WHATSAPP + ' | Instagram: ' + INSTAGRAM + '</p></div><h2>Orçamento de Serviço de Impressão 3D</h2><table><tr><td class="label">Cliente:</td><td class="value">' + cliente + '</td></tr><tr><td class="label">Item/Modelo:</td><td class="value">' + peca + '</td></tr><tr><td class="label">Material:</td><td class="value" style="font-weight: bold;">' + material + '</td></tr><tr><td class="label">Prazo de Entrega:</td><td class="value" style="font-weight: bold; color: #3b82f6;">' + prazo + '</td></tr><tr><td class="label">Data de Emissão:</td><td class="value">' + dataAtual + '</td></tr></table>' + blocoDescricao + '<div class="total-box"><span class="total-label">Valor Total do Serviço</span><span class="total-val">' + total + '</span></div><div class="footer"><p>Agradecemos a preferência e a confiança em nosso trabalho!</p></div></body></html>');
         novaAba.document.close();
     }
 </script>
