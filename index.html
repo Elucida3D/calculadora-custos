@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Elucida3D - Calculadora de Custo de Impressão</title>
-    <!-- Biblioteca para geração do PDF -->
-    <script src="https://cloudflare.com"></script>
     <style>
         :root {
             --bg-color: #121212;
@@ -14,14 +12,13 @@
             --text-muted: #a0a0a0;
             --accent-color: #00e5ff;
             --border-color: #333333;
-            --btn-color: #00b8d4;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
         body {
@@ -153,7 +150,7 @@
         .btn-pdf {
             width: 100%;
             padding: 12px;
-            background-color: var(--btn-color);
+            background-color: #00b8d4;
             color: #000000;
             border: none;
             border-radius: 6px;
@@ -161,23 +158,42 @@
             font-weight: bold;
             cursor: pointer;
             margin-top: 20px;
-            transition: background-color 0.2s ease;
+            transition: background-color 0.2s;
         }
 
         .btn-pdf:hover {
-            background-color: var(--accent-color);
+            background-color: #00e5ff;
         }
 
-        .pdf-preview {
-            background-color: #1e1e1e !important;
-            color: #ffffff !important;
-            padding: 30px !important;
+        #recibo-print {
+            display: none;
+        }
+
+        /* CONFIGURAÇÃO EXCLUSIVA PARA O PDF/IMPRESSÃO */
+        @media print {
+            body {
+                background-color: #ffffff !important;
+                color: #000000 !important;
+                padding: 0;
+                display: block;
+            }
+            .container {
+                display: none !important; /* Esconde a calculadora preta com os inputs */
+            }
+            #recibo-print {
+                display: block !important; /* Mostra apenas o recibo limpo */
+                width: 100%;
+                max-width: 100%;
+                box-shadow: none;
+                border: none;
+                color: #000000 !important;
+            }
         }
     </style>
 </head>
 <body>
 
-    <div class="container" id="conteudo-calculadora">
+    <div class="container">
         <div class="brand-header">
             <h1>Elucida3D</h1>
             <p>Calculadora de Custo de Impressão</p>
@@ -190,7 +206,7 @@
                 <input type="number" id="peso" value="50" min="0" step="0.1" oninput="calcular()">
             </div>
             <div class="input-group">
-                <label for="custoKg">Custo do Filamento (R$/kg)</label>
+                <label for="custoKg">Custo do Filamento (R\$/kg)</label>
                 <input type="number" id="custoKg" value="80.00" min="0" step="0.01" oninput="calcular()">
             </div>
         </div>
@@ -216,68 +232,69 @@
 
         <div class="section-title">Configurações Fixas</div>
         <div class="fixed-info">
-            Potência: 250W | Energia: R$ 0,709/kWh | Desgaste: R$ 2,00/h | Lucro: 100%
+            Potência: 250W | Energia: R\$ 0,709/kWh | Desgaste: R\$ 2,00/h | Lucro: 100%
         </div>
 
         <div class="section-title">Custos Operacionais</div>
         <div class="input-group">
-            <label for="maoDeObra">Custo de Mão de Obra (R$/h)</label>
+            <label for="maoDeObra">Custo de Mão de Obra (R\$/h)</label>
             <input type="number" id="maoDeObra" value="15.00" min="0" step="0.01" oninput="calcular()">
         </div>
 
-        <div class="results-box" id="bloco-resultados">
+        <div class="results-box">
             <div class="result-item">
                 <span>Custo do Material:</span>
-                <span id="resMaterial">R$ 0,00</span>
+                <span id="resMaterial">R\$ 0,00</span>
             </div>
             <div class="result-item">
                 <span>Custo de Energia:</span>
-                <span id="resEnergia">R$ 0,00</span>
+                <span id="resEnergia">R\$ 0,00</span>
             </div>
             <div class="result-item">
                 <span>Custo de Desgaste:</span>
-                <span id="resDesgaste">R$ 0,00</span>
+                <span id="resDesgaste">R\$ 0,00</span>
             </div>
             <div class="result-item">
                 <span>Custo de Mão de Obra:</span>
-                <span id="resMaoDeObra">R$ 0,00</span>
+                <span id="resMaoDeObra">R\$ 0,00</span>
             </div>
             <div class="result-item total">
                 <span>Custo de Produção Total:</span>
-                <span id="resCustoTotal">R$ 0,00</span>
+                <span id="resCustoTotal">R\$ 0,00</span>
             </div>
             <div class="result-item total final-price">
                 <span>Preço Sugerido (100% Lucro):</span>
-                <span id="resPrecoFinal">R$ 0,00</span>
+                <span id="resPrecoFinal">R\$ 0,00</span>
             </div>
         </div>
 
         <button class="btn-pdf" onclick="gerarPDF()">Gerar PDF para Cliente</button>
     </div>
 
-    <!-- Elemento invisível na tela que será transformado em PDF -->
-    <div id="recibo-cliente" style="display: none; font-family: Arial, sans-serif; background-color: #1e1e1e; color: #ffffff; padding: 30px; width: 500px;">
-        <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #00e5ff; padding-bottom: 15px;">
-            <h1 style="color: #00e5ff; font-size: 2.2rem; margin: 0 0 5px 0;">Elucida3D</h1>
-            <p style="color: #a0a0a0; font-size: 1rem; margin: 0;">Orçamento de Impressão 3D</p>
+    <!-- ESTRUTURA DO RECIBO DO CLIENTE (SÓ APARECE NO PDF) -->
+    <div id="recibo-print" style="padding: 20px; font-family: Arial, sans-serif;">
+        <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #00b8d4; padding-bottom: 15px;">
+            <h1 style="color: #00b8d4; font-size: 2.2rem; margin: 0;">Elucida3D</h1>
+            <p style="color: #666; font-size: 1rem; margin: 5px 0 0 0;">Orçamento de Impressão 3D</p>
         </div>
         
         <div style="margin-bottom: 25px;">
-            <h3 style="color: #00e5ff; font-size: 1.1rem; margin-bottom: 12px; border-bottom: 1px solid #333; padding-bottom: 4px;">Especificações Técnicas</h3>
-            <p style="margin: 0 0 8px 0; font-size: 0.95rem;"><strong style="color: #a0a0a0;">Tipo de Material:</strong> <span id="pdfMaterial">PLA</span></p>
-            <p style="margin: 0 0 8px 0; font-size: 0.95rem;"><strong style="color: #a0a0a0;">Peso Estimado:</strong> <span id="pdfPeso">0</span>g</p>
-            <p style="margin: 0 0 8px 0; font-size: 0.95rem;"><strong style="color: #a0a0a0;">Tempo de Produção:</strong> <span id="pdfTempo">0h 0min</span></p>
+            <h3 style="color: #00b8d4; font-size: 1.2rem; margin-bottom: 12px; border-bottom: 1px solid #ddd; padding-bottom: 5px;">Especificações Técnicas</h3>
+            <p style="margin: 8px 0; font-size: 1rem;"><strong>Tipo de Material:</strong> <span id="printMaterial">PLA</span></p>
+            <p style="margin: 8px 0; font-size: 1rem;"><strong>Peso Estimado:</strong> <span id="printPeso">0</span>g</p>
+            <p style="margin: 8px 0; font-size: 1rem;"><strong>Tempo de Produção:</strong> <span id="printTempo">0h</span></p>
         </div>
 
-        <div style="background-color: #161616; border: 1px solid #333; border-radius: 8px; padding: 20px; text-align: center; margin-top: 40px;">
-            <span style="display: block; color: #a0a0a0; font-size: 1rem; margin-bottom: 8px;">Valor Total do Serviço</span>
-            <span id="pdfPrecoFinal" style="color: #00e5ff; font-size: 2rem; font-weight: bold;">R$ 0,00</span>
+        <div style="background-color: #f5f5f5; border: 1px solid #ddd; border-radius: 8px; padding: 25px; text-align: center; margin-top: 40px;">
+            <span style="color: #666; font-size: 1.1rem; display: block; margin-bottom: 5px;">Valor Total do Serviço</span>
+            <span id="printPrecoFinal" style="color: #00b8d4; font-size: 2.2rem; font-weight: bold;">R\$ 0,00</span>
         </div>
 
-        <div style="margin-top: 60px; text-align: center; color: #a0a0a0; font-size: 0.8rem; border-top: 1px solid #333; padding-top: 15px;">
+        <div style="margin-top: 80px; text-align: center; color: #888; font-size: 0.9rem; border-top: 1px solid #ddd; padding-top: 15px;">
             Obrigado pela preferência! | Elucida3D - Soluções em Impressão 3D
         </div>
     </div>
+
     <script>
         function calcular() {
             const peso = parseFloat(document.getElementById('peso').value) || 0;
@@ -305,34 +322,14 @@
         }
 
         function gerarPDF() {
-            // 1. Atualiza os dados do recibo oculto com as informações da tela
-            document.getElementById('pdfMaterial').innerText = document.getElementById('tipoFilamento').value;
-            document.getElementById('pdfPeso').innerText = document.getElementById('peso').value;
-            document.getElementById('pdfTempo').innerText = `${document.getElementById('horas').value}h ${document.getElementById('minutos').value}min`;
-            document.getElementById('pdfPrecoFinal').innerText = document.getElementById('resPrecoFinal').innerText;
+            // Transfere os dados da tela para o molde do recibo antes de imprimir
+            document.getElementById('printMaterial').innerText = document.getElementById('tipoFilamento').value;
+            document.getElementById('printPeso').innerText = document.getElementById('peso').value;
+            document.getElementById('printTempo').innerText = `${document.getElementById('horas').value}h ${document.getElementById('minutos').value}min`;
+            document.getElementById('printPrecoFinal').innerText = document.getElementById('resPrecoFinal').innerText;
 
-            // 2. Seleciona o elemento do recibo para a conversão
-            const elemento = document.getElementById('recibo-cliente');
-            
-            // 3. Torna o elemento visível temporariamente apenas para a biblioteca capturar
-            elemento.style.display = 'block';
-
-            const opcoes = {
-                margin:       10,
-                filename:     'Orcamento_Elucida3D.pdf',
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, logging: false, useCORS: true },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-
-            // 4. Executa a criação do PDF e oculta o elemento novamente após o download
-            html2pdf().set(opcoes).from(elemento).save().then(() => {
-                elemento.style.display = 'none';
-            }).catch((erro) => {
-                elemento.style.display = 'none';
-                alert('Erro ao gerar o PDF. Verifique sua conexão com a internet.');
-                console.error(erro);
-            });
+            // Abre a janela nativa do sistema para Salvar como PDF
+            window.print();
         }
 
         window.onload = calcular;
