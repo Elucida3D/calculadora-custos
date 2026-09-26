@@ -102,11 +102,11 @@
     </div>
     <div class="form-group">
         <label>Peso da Peça (gramas):</label>
-        <input type="number" id="peso" placeholder="0">
+        <input type="number" id="peso" value="0">
     </div>
     <div class="form-group">
         <label>Tempo de Impressão (horas):</label>
-        <input type="number" id="tempo" placeholder="0">
+        <input type="number" id="tempo" value="0">
     </div>
     <div class="form-group">
         <label>Margem de Lucro (%):</label>
@@ -133,9 +133,13 @@
     const PRECO_HORA = 2;
 
     function calcular() {
-        const peso = parseFloat(document.getElementById('peso').value) || 0;
-        const tempo = parseFloat(document.getElementById('tempo').value) || 0;
-        const lucro = parseFloat(document.getElementById('lucro').value) || 0;
+        const pesoInput = document.getElementById('peso').value;
+        const tempoInput = document.getElementById('tempo').value;
+        const lucroInput = document.getElementById('lucro').value;
+
+        const peso = parseFloat(pesoInput) || 0;
+        const tempo = parseFloat(tempoInput) || 0;
+        const lucro = parseFloat(lucroInput) || 0;
         const material = document.getElementById('material').value;
 
         const precoKg = (material === "PETG") ? 140 : 130;
@@ -162,10 +166,9 @@
         const total = document.getElementById('resTotal').innerText;
         const dataAtual = new Date().toLocaleDateString('pt-BR');
 
-        const descricaoFormatada = descricao.replace(/\n/g, '<br>');
-
         let blocoDescricao = '';
         if (descricao.trim() !== '') {
+            const descricaoFormatada = descricao.replace(/\n/g, '<br>');
             blocoDescricao = '<div style="color: #666; font-weight: bold; margin-top: 10px;">Descrição Detalhada:</div>' +
                              '<div style="background: #fdfdfd; border: 1px dashed #ccc; padding: 15px; border-radius: 6px; margin: 20px 0; font-size: 15px; color: #444;">' + descricaoFormatada + '</div>';
         }
