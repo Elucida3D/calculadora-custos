@@ -254,6 +254,30 @@
 
         <button class="btn-pdf" onclick="gerarPDF()">Gerar PDF para Cliente</button>
     </div>
+
+    <!-- Elemento invisível na tela que será transformado em PDF -->
+    <div id="recibo-cliente" style="display: none; font-family: Arial, sans-serif; background-color: #1e1e1e; color: #ffffff; padding: 30px; width: 500px;">
+        <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #00e5ff; padding-bottom: 15px;">
+            <h1 style="color: #00e5ff; font-size: 2.2rem; margin: 0 0 5px 0;">Elucida3D</h1>
+            <p style="color: #a0a0a0; font-size: 1rem; margin: 0;">Orçamento de Impressão 3D</p>
+        </div>
+        
+        <div style="margin-bottom: 25px;">
+            <h3 style="color: #00e5ff; font-size: 1.1rem; margin-bottom: 12px; border-bottom: 1px solid #333; padding-bottom: 4px;">Especificações Técnicas</h3>
+            <p style="margin: 0 0 8px 0; font-size: 0.95rem;"><strong style="color: #a0a0a0;">Tipo de Material:</strong> <span id="pdfMaterial">PLA</span></p>
+            <p style="margin: 0 0 8px 0; font-size: 0.95rem;"><strong style="color: #a0a0a0;">Peso Estimado:</strong> <span id="pdfPeso">0</span>g</p>
+            <p style="margin: 0 0 8px 0; font-size: 0.95rem;"><strong style="color: #a0a0a0;">Tempo de Produção:</strong> <span id="pdfTempo">0h 0min</span></p>
+        </div>
+
+        <div style="background-color: #161616; border: 1px solid #333; border-radius: 8px; padding: 20px; text-align: center; margin-top: 40px;">
+            <span style="display: block; color: #a0a0a0; font-size: 1rem; margin-bottom: 8px;">Valor Total do Serviço</span>
+            <span id="pdfPrecoFinal" style="color: #00e5ff; font-size: 2rem; font-weight: bold;">R$ 0,00</span>
+        </div>
+
+        <div style="margin-top: 60px; text-align: center; color: #a0a0a0; font-size: 0.8rem; border-top: 1px solid #333; padding-top: 15px;">
+            Obrigado pela preferência! | Elucida3D - Soluções em Impressão 3D
+        </div>
+    </div>
     <script>
         function calcular() {
             const peso = parseFloat(document.getElementById('peso').value) || 0;
@@ -281,46 +305,34 @@
         }
 
         function gerarPDF() {
-            const peso = document.getElementById('peso').value;
-            const tipo = document.getElementById('tipoFilamento').value;
-            const horas = document.getElementById('horas').value;
-            const minutos = document.getElementById('minutos').value;
-            const precoFinal = document.getElementById('resPrecoFinal').innerText;
+            // 1. Atualiza os dados do recibo oculto com as informações da tela
+            document.getElementById('pdfMaterial').innerText = document.getElementById('tipoFilamento').value;
+            document.getElementById('pdfPeso').innerText = document.getElementById('peso').value;
+            document.getElementById('pdfTempo').innerText = `${document.getElementById('horas').value}h ${document.getElementById('minutos').value}min`;
+            document.getElementById('pdfPrecoFinal').innerText = document.getElementById('resPrecoFinal').innerText;
 
-            const elementoEsqueleto = document.createElement('div');
-            elementoEsqueleto.className = 'pdf-preview';
-            elementoEsqueleto.innerHTML = `
-                <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #00e5ff; padding-bottom: 15px;">
-                    <h1 style="color: #00e5ff; font-size: 2.2rem; margin-bottom: 5px;">Elucida3D</h1>
-                    <p style="color: #a0a0a0; font-size: 1rem;">Orçamento de Impressão 3D</p>
-                </div>
-                
-                <div style="margin-bottom: 25px;">
-                    <h3 style="color: #00e5ff; font-size: 1.1rem; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 4px;">Especificações Técnicas</h3>
-                    <p style="margin-bottom: 8px; font-size: 0.95rem; color: #ffffff;"><strong style="color: #a0a0a0;">Tipo de Material:</strong> ${tipo}</p>
-                    <p style="margin-bottom: 8px; font-size: 0.95rem; color: #ffffff;"><strong style="color: #a0a0a0;">Peso Estimado:</strong> ${peso}g</p>
-                    <p style="margin-bottom: 8px; font-size: 0.95rem; color: #ffffff;"><strong style="color: #a0a0a0;">Tempo de Produção:</strong> ${horas}h ${minutos}min</p>
-                </div>
-
-                <div style="background-color: #161616; border: 1px solid #333; border-radius: 8px; padding: 20px; text-align: center; margin-top: 40px;">
-                    <span style="display: block; color: #a0a0a0; font-size: 1rem; margin-bottom: 8px;">Valor Total do Serviço</span>
-                    <span style="color: #00e5ff; font-size: 2rem; font-weight: bold;">${precoFinal}</span>
-                </div>
-
-                <div style="margin-top: 60px; text-align: center; color: #a0a0a0; font-size: 0.8rem; border-top: 1px solid #333; padding-top: 15px;">
-                    Obrigado pela preferência! | Elucida3D - Soluções em Impressão 3D
-                </div>
-            `;
+            // 2. Seleciona o elemento do recibo para a conversão
+            const elemento = document.getElementById('recibo-cliente');
+            
+            // 3. Torna o elemento visível temporariamente apenas para a biblioteca capturar
+            elemento.style.display = 'block';
 
             const opcoes = {
-                margin:       15,
+                margin:       10,
                 filename:     'Orcamento_Elucida3D.pdf',
                 image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#1e1e1e' },
+                html2canvas:  { scale: 2, logging: false, useCORS: true },
                 jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
-            html2pdf().set(opcoes).from(elementoEsqueleto).save();
+            // 4. Executa a criação do PDF e oculta o elemento novamente após o download
+            html2pdf().set(opcoes).from(elemento).save().then(() => {
+                elemento.style.display = 'none';
+            }).catch((erro) => {
+                elemento.style.display = 'none';
+                alert('Erro ao gerar o PDF. Verifique sua conexão com a internet.');
+                console.error(erro);
+            });
         }
 
         window.onload = calcular;
