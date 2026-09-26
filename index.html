@@ -138,16 +138,16 @@
         const lucro = parseFloat(document.getElementById('lucro').value) || 0;
         const material = document.getElementById('material').value;
 
-        const precoKg = material === 'PETG' ? 140 : 130;
+        const precoKg = (material === "PETG") ? 140 : 130;
 
-        const custoMaterial = (peso * (precoKg / 1000));
+        const custoMaterial = peso * (precoKg / 1000);
         const custoMaquina = tempo * PRECO_HORA;
         const custoFabricacao = custoMaterial + custoMaquina;
         const precoFinal = custoFabricacao * (1 + (lucro / 100));
 
-        document.getElementById('resMaterial').innerText = `R$ ${custoMaterial.toFixed(2).replace('.', ',')}`;
-        document.getElementById('resMaquina').innerText = `R$ ${custoMaquina.toFixed(2).replace('.', ',')}`;
-        document.getElementById('resTotal').innerText = `R$ ${precoFinal.toFixed(2).replace('.', ',')}`;
+        document.getElementById('resMaterial').innerText = "R$ " + custoMaterial.toFixed(2).replace('.', ',');
+        document.getElementById('resMaquina').innerText = "R$ " + custoMaquina.toFixed(2).replace('.', ',');
+        document.getElementById('resTotal').innerText = "R$ " + precoFinal.toFixed(2).replace('.', ',');
 
         document.getElementById('resultado').style.display = 'block';
         document.getElementById('btnPdf').style.display = 'block';
@@ -162,56 +162,20 @@
         const total = document.getElementById('resTotal').innerText;
         const dataAtual = new Date().toLocaleDateString('pt-BR');
 
+        const descricaoFormatada = descricao.replace(/\n/g, '<br>');
+
+        let blocoDescricao = '';
+        if (descricao.trim() !== '') {
+            blocoDescricao = '<div style="color: #666; font-weight: bold; margin-top: 10px;">Descrição Detalhada:</div>' +
+                             '<div style="background: #fdfdfd; border: 1px dashed #ccc; padding: 15px; border-radius: 6px; margin: 20px 0; font-size: 15px; color: #444;">' + descricaoFormatada + '</div>';
+        }
+
         const novaAba = window.open('', '_blank');
         
-        novaAba.document.write(`
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <title>Orçamento - ${cliente}</title>
-                <style>
-                    body { font-family: sans-serif; padding: 40px; color: #333; background: #fff; line-height: 1.5; }
-                    .header { text-align: center; border-bottom: 2px solid #007bff; padding-bottom: 15px; margin-bottom: 30px; }
-                    .header h1 { margin: 0; color: #007bff; font-size: 32px; }
-                    .header p { margin: 5px 0 0 0; color: #555; font-size: 16px; }
-                    h2 { font-size: 20px; color: #444; margin-bottom: 20px; }
-                    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 16px; }
-                    td { padding: 10px 0; vertical-align: top; }
-                    .label { color: #666; width: 150px; font-weight: bold; }
-                    .value { color: #111; }
-                    .desc-box { background: #fdfdfd; border: 1px dashed #ccc; padding: 15px; border-radius: 6px; margin: 20px 0; font-size: 15px; color: #444; }
-                    .total-box { background: #f8f9fa; border-left: 5px solid #28a745; padding: 20px; border-radius: 4px; margin: 30px 0; }
-                    .total-label { font-size: 14px; color: #666; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px; }
-                    .total-val { font-size: 30px; color: #28a745; display: block; margin-top: 5px; font-weight: bold; }
-                    .footer { margin-top: 60px; border-top: 1px solid #eee; padding-top: 20px; text-align: center; font-size: 14px; color: #888; }
-                    .btn-print { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; margin-bottom: 20px; font-size: 15px; }
-                    @media print { .btn-print { display: none; } body { padding: 20px; } }
-                </style>
-            </head>
-            <body>
-                <button class="btn-print" onclick="window.print()">Salvar / Imprimir Orçamento</button>
-                <div class="header">
-                    <h1>${NOME_MARCA}</h1>
-                    <p>WhatsApp: ${WHATSAPP}</p>
-                </div>
-                <h2>Orçamento de Serviço de Impressão 3D</h2>
-                <table>
-                    <tr><td class="label">Cliente:</td><td class="value">${cliente}</td></tr>
-                    <tr><td class="label">Item/Modelo:</td><td class="value">${peca}</td></tr>
-                    <tr><td class="label">Material:</td><td class="value" style="font-weight: bold;">${material}</td></tr>
-                    <tr><td class="label">Prazo de Entrega:</td><td class="value" style="font-weight: bold; color: #007bff;">${prazo}</td></tr>
-                    <tr><td class="label">Data de Emissão:</td><td class="value">${dataAtual}</td></tr>
-                </table>
-                
-                ${descricao ? `
-                <div class="label" style="margin-top: 10px;">Descrição Detalhada:</div>
-                <div class="desc-box">${descricao}</div>
-                ` : ''}
+        novaAba.document.write('<!DOCTYPE html><html><head><title>Orçamento - ' + cliente + '</title><style>body { font-family: sans-serif; padding: 40px; color: #333; background: #fff; line-height: 1.5; }.header { text-align: center; border-bottom: 2px solid #007bff; padding-bottom: 15px; margin-bottom: 30px; }.header h1 { margin: 0; color: #007bff; font-size: 32px; }.header p { margin: 5px 0 0 0; color: #555; font-size: 16px; }h2 { font-size: 20px; color: #444; margin-bottom: 20px; }table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 16px; }td { padding: 10px 0; vertical-align: top; }.label { color: #666; width: 150px; font-weight: bold; }.value { color: #111; }.total-box { background: #f8f9fa; border-left: 5px solid #28a745; padding: 20px; border-radius: 4px; margin: 30px 0; }.total-label { font-size: 14px; color: #666; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px; }.total-val { font-size: 30px; color: #28a745; display: block; margin-top: 5px; font-weight: bold; }.footer { margin-top: 60px; border-top: 1px solid #eee; padding-top: 20px; text-align: center; font-size: 14px; color: #888; }.btn-print { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; margin-bottom: 20px; font-size: 15px; }@media print { .btn-print { display: none; } body { padding: 20px; } }</style></head><body><button class="btn-print" onclick="window.print()">Salvar / Imprimir Orçamento</button><div class="header"><h1>' + NOME_MARCA + '</h1><p>WhatsApp: ' + WHATSAPP + '</p></div><h2>Orçamento de Serviço de Impressão 3D</h2><table><tr><td class="label">Cliente:</td><td class="value">' + cliente + '</td></tr><tr><td class="label">Item/Modelo:</td><td class="value">' + peca + '</td></tr><tr><td class="label">Material:</td><td class="value" style="font-weight: bold;">' + material + '</td></tr><tr><td class="label">Prazo de Entrega:</td><td class="value" style="font-weight: bold; color: #007bff;">' + prazo + '</td></tr><tr><td class="label">Data de Emissão:</td><td class="value">' + dataAtual + '</td></tr></table>' + blocoDescricao + '<div class="total-box"><span class="total-label">Valor Total do Serviço</span><span class="total-val">' + total + '</span></div><div class="footer"><p>Agradecemos a preferência e a confiança em nosso trabalho!</p></div></body></html>');
+        novaAba.document.close();
+    }
+</script>
 
-                <div class="total-box">
-                    <span class="total-label">Valor Total do Serviço</span>
-                    <span class="total-val">${total}</span>
-                </div>
-                <div class="footer">
-                    <p>Agradecemos a preferência e a confiança em nosso trabalho!</p>
-                </div>
+</body>
+</html>
