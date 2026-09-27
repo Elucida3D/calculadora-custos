@@ -169,7 +169,6 @@
             display: none;
         }
 
-        /* CONFIGURAÇÃO EXCLUSIVA PARA O PDF/IMPRESSÃO */
         @media print {
             body {
                 background-color: #ffffff !important;
@@ -178,10 +177,10 @@
                 display: block;
             }
             .container {
-                display: none !important; /* Esconde a calculadora preta com os inputs */
+                display: none !important;
             }
             #recibo-print {
-                display: block !important; /* Mostra apenas o recibo limpo */
+                display: block !important;
                 width: 100%;
                 max-width: 100%;
                 box-shadow: none;
@@ -190,13 +189,35 @@
             }
         }
     </style>
-</head>
-<body>
+</head><body>
 
     <div class="container">
         <div class="brand-header">
             <h1>Elucida3D</h1>
             <p>Calculadora de Custo de Impressão</p>
+        </div>
+
+        <!-- SEÇÃO: INFORMAÇÕES DO CLIENTE -->
+        <div class="section-title">Dados do Orçamento</div>
+        <div class="input-row">
+            <div class="input-group">
+                <label for="nomeCliente">Nome do Cliente</label>
+                <input type="text" id="nomeCliente" placeholder="Ex: João Silva">
+            </div>
+            <div class="input-group">
+                <label for="nomeProduto">Nome do Produto</label>
+                <input type="text" id="nomeProduto" placeholder="Ex: Action Figure Batman">
+            </div>
+        </div>
+        <div class="input-row">
+            <div class="input-group">
+                <label for="dataOrcamento">Data do Orçamento</label>
+                <input type="date" id="dataOrcamento">
+            </div>
+            <div class="input-group">
+                <label for="prazoEntrega">Prazo de Entrega</label>
+                <input type="text" id="prazoEntrega" placeholder="Ex: 5 dias úteis">
+            </div>
         </div>
 
         <div class="section-title">Material</div>
@@ -206,7 +227,7 @@
                 <input type="number" id="peso" value="0" min="0" step="0.1" oninput="calcular()">
             </div>
             <div class="input-group">
-                <label for="custoKg">Custo do Filamento (R\$/kg)</label>
+                <label for="custoKg">Custo do Filamento (R$/kg)</label>
                 <input type="number" id="custoKg" value="130.00" min="0" step="0.01" oninput="calcular()">
             </div>
         </div>
@@ -232,50 +253,57 @@
 
         <div class="section-title">Configurações Fixas</div>
         <div class="fixed-info">
-            Potência: 250W | Energia: R\$ 0,709/kWh | Desgaste: R\$ 2,00/h | Lucro: 100%
+            Potência: 250W | Energia: R$ 0,709/kWh | Desgaste: R$ 2,00/h | Lucro: 100%
         </div>
 
         <div class="section-title">Custos Operacionais</div>
         <div class="input-group">
-            <label for="maoDeObra">Custo de Mão de Obra (R\$/h)</label>
+            <label for="maoDeObra">Custo de Mão de Obra (R$/h)</label>
             <input type="number" id="maoDeObra" value="00.00" min="0" step="0.01" oninput="calcular()">
         </div>
 
         <div class="results-box">
             <div class="result-item">
                 <span>Custo do Material:</span>
-                <span id="resMaterial">R\$ 0,00</span>
+                <span id="resMaterial">R$ 0,00</span>
             </div>
             <div class="result-item">
                 <span>Custo de Energia:</span>
-                <span id="resEnergia">R\$ 0,00</span>
+                <span id="resEnergia">R$ 0,00</span>
             </div>
             <div class="result-item">
                 <span>Custo de Desgaste:</span>
-                <span id="resDesgaste">R\$ 0,00</span>
+                <span id="resDesgaste">R$ 0,00</span>
             </div>
             <div class="result-item">
                 <span>Custo de Mão de Obra:</span>
-                <span id="resMaoDeObra">R\$ 0,00</span>
+                <span id="resMaoDeObra">R$ 0,00</span>
             </div>
             <div class="result-item total">
                 <span>Custo de Produção Total:</span>
-                <span id="resCustoTotal">R\$ 0,00</span>
+                <span id="resCustoTotal">R$ 0,00</span>
             </div>
             <div class="result-item total final-price">
                 <span>Preço Sugerido (100% Lucro):</span>
-                <span id="resPrecoFinal">R\$ 0,00</span>
+                <span id="resPrecoFinal">R$ 0,00</span>
             </div>
         </div>
 
         <button class="btn-pdf" onclick="gerarPDF()">Gerar PDF para Cliente</button>
-    </div>
-
-    <!-- ESTRUTURA DO RECIBO DO CLIENTE (SÓ APARECE NO PDF) -->
+    </div>    <!-- ESTRUTURA DO RECIBO DO CLIENTE (SÓ APARECE NO PDF) -->
     <div id="recibo-print" style="padding: 20px; font-family: Arial, sans-serif;">
         <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #00b8d4; padding-bottom: 15px;">
             <h1 style="color: #00b8d4; font-size: 2.2rem; margin: 0;">Elucida3D</h1>
             <p style="color: #666; font-size: 1rem; margin: 5px 0 0 0;">Orçamento de Impressão 3D</p>
+        </div>
+
+        <!-- IDENTIFICAÇÃO DO CLIENTE E ORÇAMENTO NO PDF -->
+        <div style="margin-bottom: 25px; background-color: #fafafa; border: 1px solid #eee; border-radius: 6px; padding: 15px;">
+            <h3 style="color: #00b8d4; font-size: 1.1rem; margin-bottom: 10px; border-bottom: 1px solid #ddd; padding-bottom: 3px;">Informações do Orçamento</h3>
+            <p style="margin: 6px 0; font-size: 1rem;"><strong>Cliente:</strong> <span id="printNomeCliente">-</span></p>
+            <p style="margin: 6px 0; font-size: 1rem;"><strong>Produto/Projeto:</strong> <span id="printNomeProduto">-</span></p>
+            <p style="margin: 6px 0; font-size: 1rem;"><strong>Data de Emissão:</strong> <span id="printDataOrcamento">-</span></p>
+            <p style="margin: 6px 0; font-size: 1rem;"><strong>Prazo de Entrega Estimado:</strong> <span id="printPrazoEntrega">-</span></p>
         </div>
         
         <div style="margin-bottom: 25px;">
@@ -322,13 +350,32 @@
         }
 
         function gerarPDF() {
-            // Transfere os dados da tela para o molde do recibo antes de imprimir
+            // TRANSFERÊNCIA DOS DADOS DO CLIENTE PARA O PDF
+            const cliente = document.getElementById('nomeCliente').value || "Não informado";
+            const produto = document.getElementById('nomeProduto').value || "Não informado";
+            const prazo = document.getElementById('prazoEntrega').value || "Não informado";
+            
+            // Corrige o formato da data automática de AAAA-MM-DD para DD/MM/AAAA
+            const dataInput = document.getElementById('dataOrcamento').value;
+            let dataFormatada = "Não informada";
+            if(dataInput) {
+                const partes = dataInput.split('-');
+                dataFormatada = `${partes[2]}/${partes[1]}/${partes[0]}`;
+            }
+
+            // Injeta as informações preenchidas no documento final
+            document.getElementById('printNomeCliente').innerText = cliente;
+            document.getElementById('printNomeProduto').innerText = produto;
+            document.getElementById('printDataOrcamento').innerText = dataFormatada;
+            document.getElementById('printPrazoEntrega').innerText = prazo;
+
+            // Transfere os dados técnicos originais da tela para o recibo antes de imprimir
             document.getElementById('printMaterial').innerText = document.getElementById('tipoFilamento').value;
             document.getElementById('printPeso').innerText = document.getElementById('peso').value;
             document.getElementById('printTempo').innerText = `${document.getElementById('horas').value}h ${document.getElementById('minutos').value}min`;
             document.getElementById('printPrecoFinal').innerText = document.getElementById('resPrecoFinal').innerText;
 
-            // Abre a janela nativa do sistema para Salvar como PDF
+            // Dispara a janela de salvamento/impressão
             window.print();
         }
 
@@ -336,3 +383,5 @@
     </script>
 </body>
 </html>
+
+
